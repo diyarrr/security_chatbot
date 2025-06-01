@@ -1,0 +1,81 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# VS Code settings
+.vscode/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Python metadata
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Pytest
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Backend data folders (can be regenerated or are user/data specific)
+backend/data/
+data/chroma_db/
+data/knowledge_base/
+data/pdf_documents/
+
+# Node modules
+frontend-vite/node_modules/
+
+# Logs
+*.log
+
+# Dependency directories
+node_modules/
+
+# Frontend build output (if applicable)
+dist/
+build/
+
+# Environment files
+.env
+.env.*
+
+# Vite cache
+.vite/
+.vite-cache/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+
+.env
