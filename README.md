@@ -1,76 +1,139 @@
-# Rank-Aware Security Chatbot
+# Rank-Aware Security Advisor Chatbot
 
-An AI-powered Security Advisor Chatbot that utilizes a Large Language Model (LLM) to interactively educate and advise users on cybersecurity best practices.
+## 📖 Project Description
 
-## Features
+This project is an AI-powered Security Advisor Chatbot designed to interactively educate users on cybersecurity best practices. It utilizes a Large Language Model (LLM) with Retrieval-Augmented Generation (RAG) to provide accurate, context-aware advice. The chatbot features a gamified progression system where users gain Experience Points (XP) and advance through ranks, unlocking access to more advanced security topics.
 
-- Interactive chat interface for security questions
-- Rank-based progression system with XP
-- Retrieval-Augmented Generation (RAG) for accurate responses
-- Topic-based access control by rank
-- Feedback mechanism for continuous improvement
-- PDF document processing for knowledge base creation
+### Key Features
+- **Interactive Chat Interface:** Users can ask security-related questions in natural language.
+- **Rank-Based Progression:** A system of ranks and XP (from "Security Novice" to "Security Master") to motivate learning.
+- **Topic Gating:** Access to advanced topics is restricted by the user's rank, ensuring a structured learning path.
+- **Retrieval-Augmented Generation (RAG):** The chatbot uses a knowledge base built from your own PDF documents to provide accurate and reliable answers, reducing hallucinations.
+- **PDF Document Processing:** Automatically processes your own security documents (e.g., company policies, NIST guidelines) to build the chatbot's knowledge base.
+- **Interactive Quizzes:** The chatbot generates follow-up questions to test user understanding and award XP for correct answers.
 
-## Setup Instructions
+---
 
-1. Clone this repository
+## 🛠️ Installation and Setup
 
-2. Create a virtual environment:
+Follow these steps to get the project running on your local machine.
+
+**1. Clone the Repository**
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+git clone https://github.com/diyarrr/security_chatbot.git
+cd security_chatbot
 ```
 
-3. Install dependencies:
+**2. Create virtual environment**
+Macos/Linux:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Windows:
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**3. Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Create a .env file with your OpenAI API key and other configurations:
-```
-OPENAI_API_KEY=your_openai_api_key_here
-SECRET_KEY=your_secret_key_here
-DEBUG=True
-```
-
-5. Add your PDF security documents to `data/pdf_documents/` directory
-
-6. Process PDF documents to create knowledge base:
+**4. Run the setup script**
 ```bash
-python -c "from utils import create_knowledge_base_from_pdfs; create_knowledge_base_from_pdfs()"
+python setup.py
 ```
 
-7. Start the Flask server:
+**5. Start the backend server**
 ```bash
-python backend/app.py
+python src/backend/app.py
 ```
 
-8. Open frontend/index.html in a web browser
+**6. Run the frontend**
+```bash
+cd src/frontend-vite
+npm run dev
+```
 
-## User Ranks
+Now you can go to localhost:3000 and interact with the application
 
-- **Security Novice** (0 XP) - Basic security concepts
-- **Security Apprentice** (100 XP) - Intermediate topics  
-- **Security Adept** (250 XP) - Advanced topics
-- **Security Expert** (500 XP) - Professional security concepts
-- **Security Master** (1000 XP) - Expert-level security knowledge
 
-## Adding PDF Security Documents
+## 📁 File Overview
 
-1. Place your PDF documents in the `data/pdf_documents/` directory
-2. Run the PDF processing function to convert them to text format
-3. The system will automatically use them to enhance chatbot responses
+Here is a more detailed breakdown of the key files and their purpose in the project:
 
-## Supported PDF Sources
+---
 
-The system can process PDF documents from reliable sources such as:
-- NIST Cybersecurity Framework
-- SANS Security Guidelines
-- ISO 27001 Standards
-- Company security policies
-- Academic security research papers
-- Government cybersecurity guidelines
+### `setup.py`
 
-## License
+- **Purpose:** Orchestrates the setup process; run once to prepare the environment.
+- **Key Functions:**
+  - `main()`: The main entry point that coordinates setup tasks.
+  - `setup_pdf_processing()`: Converts PDFs into text for the knowledge base and populates ChromaDB.
+  - Also creates `.env` and runs other utility functions.
 
-MIT
+---
+
+### `src/backend/app.py`
+
+- **Purpose:** Core backend server using Flask.
+- **Key Functions:**
+  - `login()`: Manages user authentication and session creation.
+  - `chat()`: Handles chat questions, topic access, AI response, and quiz generation.
+  - `quiz()`: Evaluates quiz answers, updates XP and rank, and returns results.
+
+---
+
+### `src/backend/chatbot.py`
+
+- **Purpose:** Encapsulates AI logic and LLM interactions.
+- **Key Class:** `SecurityChatbot`
+  - `__init__(self, retriever)`: Initializes with a ChromaDB retriever.
+  - `check_topic_access(self, query, user_rank)`: Validates if user has rank to access topic.
+  - `generate_response(self, query, user_rank)`: Builds prompts and fetches AI response.
+  - `generate_followup_question(self, answer)`: Creates multiple-choice quizzes from answers.
+
+---
+
+### `src/backend/retriever.py`
+
+- **Purpose:** Manages ChromaDB and document embedding.
+- **Key Class:** `DocumentRetriever`
+  - `__init__(self, db_directory)`: Connects to ChromaDB on disk.
+  - `add_document(self, doc_path, doc_id)`: Converts text into vectors and stores them.
+  - `query_documents(self, query, n_results=3)`: Retrieves top-matching chunks based on query.
+
+---
+
+### `src/backend/models.py`
+
+- **Purpose:** Defines the user data model.
+- **Key Class:** `User`
+  - `__init__(self, user_id)`: Initializes user with 0 XP and rank 1.
+  - `add_xp(self, points)`: Adjusts XP and evaluates for promotion.
+  - `update_rank(self)`: Updates user rank based on XP.
+  - `to_dict(self)`: Converts user data to dictionary format for API responses.
+
+---
+
+### `src/frontend-vite/src/main.js`
+
+- **Purpose:** Handles frontend logic and user interactions.
+- **Key Functions:**
+  - `handleLogin()`: Sends login request and shows chat on success.
+  - `sendMessage()`: Sends user input to backend and renders response.
+  - `handleQuizAnswer()`: Submits quiz answers, updates UI and user XP.
+  - `updateUserInfoDisplay()`: Refreshes rank and XP display.
+
+---
+
+## 🤝 Acknowledgements
+
+- **Course:** CSE473 - Network and Information Security  
+- **Instructor:** Dr. Salih Sarp  
+- **Collaborators:** Diyar İsi, Mehmet Mahir Kayadelen
+
+
