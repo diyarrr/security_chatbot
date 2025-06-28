@@ -125,10 +125,12 @@ def main():
     setup_logger.info("Other configurations like SECRET_KEY can also be reviewed.")
     setup_logger.info("The script will pause. Press Enter to continue after editing .env, or Ctrl+C to exit.")
     try:
-        input("Press Enter to continue...")
-    except KeyboardInterrupt:
-        setup_logger.info("Setup interrupted by user. Please complete .env and re-run this script (python setup.py).")
-        sys.exit(0)
+        from backend import config
+        config.validate_config()
+    except ValueError as e:
+        setup_logger.error(f"❌ Configuration validation failed: {e}")
+        setup_logger.error("Exiting setup. Please edit config/.env and provide a valid OPENAI_API_KEY.")
+        sys.exit(1)
 
     # --- Step 2: Load .env variables ---
     setup_logger.info("Step 2: Loading environment variables from .env file (in project root)...")

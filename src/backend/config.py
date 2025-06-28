@@ -6,8 +6,11 @@ load_dotenv(dotenv_path="config/.env", override=True)
 
 # API Keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY environment variable not set")
+
+def validate_config():
+    if not OPENAI_API_KEY or OPENAI_API_KEY == "your_openai_api_key_here":
+        raise ValueError("OPENAI_API_KEY environment variable not set. Please update config/.env before proceeding.")
+
 
 # Flask configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
