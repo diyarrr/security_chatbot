@@ -47,7 +47,7 @@ pip install -r requirements.txt
 python setup.py
 ```
 
-If you are running this first time, it will create the .env file under the config folder and will ask you to replace the placeholder openai key with the actual key. Then you can rerun the setup.py and it will set everything up.
+If you are running this first time, it will create the .env file under the config folder and will ask you to replace the placeholder openai key with the actual key. Then you can press enter and continue with the setup.
 
 **5. Start the backend server**
 ```bash

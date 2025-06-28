@@ -118,27 +118,45 @@ def main():
     setup_logger.info("========= Starting Project Setup =========")
 
     # --- Step 1: Create .env file and prompt for API Key ---
-    setup_logger.info("Step 1: Creating .env file...")
-    create_env_file(destination_folder="config") # From /src/backend/utils.py
-    setup_logger.info("ACTION REQUIRED: The '.env' file has been created (or may have already existed) in the project root.")
-    setup_logger.info("Please edit it NOW to set your OPENAI_API_KEY.")
-    setup_logger.info("Other configurations like SECRET_KEY can also be reviewed.")
-    setup_logger.info("The script will pause. Press Enter to continue after editing .env, or Ctrl+C to exit.")
+    setup_logger.info("Step 1: Creating .env file inside 'config' folder...")
+    # We import create_env_file here, which will trigger the initial load of config
+    from backend.utils import create_env_file
+    create_env_file(destination_folder="config")
+    
+    setup_logger.info("ACTION REQUIRED: The '.env' file has been created or found in the 'config' folder.")
+    setup_logger.info("Please edit 'config/.env' NOW to set your actual OPENAI_API_KEY.")
+    setup_logger.info("The script will pause. Press Enter to continue after editing.")
     try:
+        input("Press Enter to continue...")
+    except KeyboardInterrupt:
+        setup_logger.info("Setup interrupted. Please complete .env and re-run this script.")
+        sys.exit(0)
+
+    # --- Step 2: Force Reload and Validate Configuration ---
+    setup_logger.info("Step 2: Reloading and validating configuration from config/.env...")
+    try:
+        # Import the necessary libraries
+        import importlib
         from backend import config
+
+        # Force a reload of the config module to read the new .env values
+        importlib.reload(config)
+        
+        # Now, validate the newly loaded configuration
         config.validate_config()
+        setup_logger.info("✅ OPENAI_API_KEY is valid.")
+
+    except (ImportError, ModuleNotFoundError):
+        setup_logger.error("Could not import the config module. Check your paths and __init__.py files.")
+        sys.exit(1)
     except ValueError as e:
         setup_logger.error(f"❌ Configuration validation failed: {e}")
-        setup_logger.error("Exiting setup. Please edit config/.env and provide a valid OPENAI_API_KEY.")
+        setup_logger.error("Exiting setup. Please ensure a valid OPENAI_API_KEY is in 'config/.env' and try again.")
         sys.exit(1)
 
-    # --- Step 2: Load .env variables ---
-    setup_logger.info("Step 2: Loading environment variables from .env file (in project root)...")
-    if load_dotenv(dotenv_path="config/.env"): 
-        setup_logger.info(".env file loaded successfully by setup.py.")
-    else:
-        setup_logger.warning(".env file not found in root or could not be loaded by setup.py. Defaults will be used for paths. OpenAI features will likely fail.")
-    
+    # --- Step 3: Continue with the rest of the setup ---
+    setup_logger.info("Step 3: Loading environment variables for setup script...")
+    load_dotenv(dotenv_path="config/.env", override=True)
     current_openai_api_key = os.getenv("OPENAI_API_KEY")
 
     # --- Step 3: Import configuration and determine paths ---
