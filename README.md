@@ -57,6 +57,7 @@ python src/backend/app.py
 **6. Run the frontend**
 ```bash
 cd src/frontend-vite
+npm install
 npm run dev
 ```
 
