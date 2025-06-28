@@ -47,6 +47,8 @@ pip install -r requirements.txt
 python setup.py
 ```
 
+If you are running this first time, it will create the .env file under the config folder and will ask you to replace the placeholder openai key with the actual key. Then you can rerun the setup.py and it will set everything up.
+
 **5. Start the backend server**
 ```bash
 python src/backend/app.py
@@ -55,6 +57,7 @@ python src/backend/app.py
 **6. Run the frontend**
 ```bash
 cd src/frontend-vite
+npm install
 npm run dev
 ```
 
